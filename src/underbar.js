@@ -50,13 +50,13 @@
   // Note: _.each does not have a return value, but rather simply runs the
   // iterator function over each item in the input collection.
   _.each = function(collection, iterator) {
-      // If collection is an array...
+      // If collection is an ARRAY...
       if(Array.isArray(collection)){
         for(var i = 0, length = collection.length; i < length; i++){
           iterator(collection[i], i, collection);
         }
       }
-      // If collection is an object...
+      // If collection is an OBJECT...
       else {
         for(var key in collection){
           iterator(collection[key], key, collection);
@@ -83,7 +83,7 @@
   };
 
   // Return all elements of an array that pass a truth test.
-  _.filter = function(collection, test) { //_.filter(array, function(a){return a % 2 = 0})
+  _.filter = function(collection, test) {  // _.filter(array, function(a){return a % 2 === 0});
 
       var arr = [];
       var obj = {};
@@ -109,7 +109,7 @@
       return obj;
     }
 };
-     /* USING LOOPS ^^^^^   *****
+     /* ^^^^^^^^^^^^^^ USING LOOPS FOR FUNCTION ABOVE ^^^^^   
      if(Array.isArray(collection)){
         for(var i = 0, length = collection.length; i < length; i++){
           if(test(collection[i]) === true){
@@ -126,14 +126,19 @@
         }
       }
       return obj;
-    }************************************8 */
+    }***************************end of loop alternate solution******************************/
   
   
 
   // Return all elements of an array that don't pass a truth test.
-  _.reject = function(collection, test) {
+  _.reject = function(collection, test) { 
+    // _.reject(array, function(a){return a % 2 === 0}); -- returns odd
+
     // TIP: see if you can re-use _.filter() here, without simply
     // copying code in and modifying it
+    var noPassCollection = _.filter(collection, function(a){return !test(a)});
+                                                                      //{return a%2 === 0}
+    return noPassCollection;
   };
 
   // Produce a duplicate-free version of the array.
