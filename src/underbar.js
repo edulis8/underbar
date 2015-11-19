@@ -143,6 +143,16 @@
 
   // Produce a duplicate-free version of the array.
   _.uniq = function(array) {
+    // * iterate over each element
+    // * push element to new array if it doesn't already exist in this new array
+
+    var resultArr = [];
+    _.each(array, function(element, index, collection){
+      if(_.indexOf(resultArr, element) === -1){ // If element is not found in resultArr...
+        resultArr.push(element); // ...add the element to resultArr.
+      }
+    })
+    return resultArr;
   };
 
 
