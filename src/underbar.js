@@ -83,8 +83,52 @@
   };
 
   // Return all elements of an array that pass a truth test.
-  _.filter = function(collection, test) {
-  };
+  _.filter = function(collection, test) { //_.filter(array, function(a){return a % 2 = 0})
+
+      var arr = [];
+      var obj = {};
+      // USING _.EACH
+      if(Array.isArray(collection)){
+        _.each(collection, function(element){
+          if(test(element) === true){
+            arr.push(element); // Populate empty array for return.
+          }
+        }
+        
+        )
+        return arr;
+      }
+      
+      else {
+        _.each(collection, function(value, key, collection){
+          if(test(value) === true){
+            obj[key] = value; // Populate empty object for return.
+          }
+        }
+      )
+      return obj;
+    }
+};
+     /* USING LOOPS ^^^^^   *****
+     if(Array.isArray(collection)){
+        for(var i = 0, length = collection.length; i < length; i++){
+          if(test(collection[i]) === true){
+            arr.push(collection[i]);
+          }
+        }
+        return arr;
+      }
+      
+      else {
+        for(var key in collection){
+           if(test(collection[key]) === true){
+            obj[key] = collection[key];
+        }
+      }
+      return obj;
+    }************************************8 */
+  
+  
 
   // Return all elements of an array that don't pass a truth test.
   _.reject = function(collection, test) {
