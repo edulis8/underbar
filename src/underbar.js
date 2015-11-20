@@ -64,6 +64,7 @@
       }
 
   };
+  
 
   // Returns the index at which value can be found in the array, or -1 if value
   // is not present in the array.
@@ -161,15 +162,38 @@
     // map() is a useful primitive iteration function that works a lot
     // like each(), but in addition to running the operation on all
     // the members, it also maintains an array of results.
+
+// ****** _.EACH SOLUTION FOR MAP ***************
+    var resultArr = [];
+
+    _.each(collection, function(elementOrValue, indexOrKey, collection){
+      resultArr.push(iterator(elementOrValue, indexOrKey, collection));
+    })
+
+    return resultArr;
+// ************* END _.EACH SOLUTION FOR MAP *************
+
+/* ^^^^^^^^ LOOP SOLUTION FOR MAP ^^^^^^^^
+    var resultArr = [];
+
+    if(Array.isArray(collection)){
+      for(var i = 0, length = collection.length; i < length; i++){
+        var element = collection[i];
+        resultArr.push(iterator(element, i, collection));
+      }
+    }else {
+      for(var key in collection){
+        var value = collection[key];
+        resultArr.push(iterator(value, key, collection));
+      }
+    }
+
+    return resultArr;*/
+// ********** END LOOP SOLUTION FOR MAP *************
   };
 
-  /*
-   * TIP: map is really handy when you want to transform an array of
-   * values into a new array of values. _.pluck() is solved for you
-   * as an example of this.
-   */
 
-  // Takes an array of objects and returns and array of the values of
+  // Takes an array of objects and returns an array of the values of
   // a certain property in it. E.g. take an array of people and return
   // an array of just their ages
   _.pluck = function(collection, key) {
@@ -202,6 +226,23 @@
   //   }); // should be 5, regardless of the iterator function passed in
   //          No accumulator is given so the first element is used.
   _.reduce = function(collection, iterator, accumulator) {
+
+    var result, counter;
+
+    if(accumulator !== undefined || accumulator === 0){
+      result = accumulator;
+      counter = 0; // If starting val is passed, it is used
+    } else{
+      result = collection[0];
+      counter = 1; // No starting val passed, first element used, skipped in loop
+    }
+
+    for(var i = counter; i < collection.length; i++){
+      result = iterator(result, collection[i]) // Loop and pass result (accumulator), and next item/element.
+    }
+
+    return result;
+
   };
 
   // Determine if the array or object contains a given value (using `===`).
