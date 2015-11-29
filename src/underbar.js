@@ -231,19 +231,33 @@
 
     if(accumulator !== undefined || accumulator === 0){
       result = accumulator;
-      counter = 0; // If starting val is passed, it is used
+      counter = 0; // If starting val is passed, it is used as starting val for result, even 0
     } else{
       result = collection[0];
-      counter = 1; // No starting val passed, first element used, skipped in loop
+      counter = 1; // No starting val passed, first element used as starting val for result, 
+                                                                          //skipped in loop
     }
 
-    for(var i = counter; i < collection.length; i++){
-      result = iterator(result, collection[i]) // Loop and pass result (accumulator), and next item/element.
-    }
+
+      // If collection is an ARRAY. Loop and pass result (accumulator), and next item/element.
+      if(Array.isArray(collection)){
+        for(var i = counter, length = collection.length; i < length; i++){
+          result = iterator(result, collection[i]);
+        } 
+      }
+      // If collection is an OBJECT...(is skipping first element possible? I don't know how.)
+      else {
+        for(var key in collection){
+          result = iterator(result, collection[key]);
+        }
+      }
 
     return result;
 
   };
+
+
+
 
   // Determine if the array or object contains a given value (using `===`).
   _.contains = function(collection, target) {
@@ -259,15 +273,49 @@
 
 
   // Determine whether all of the elements match a truth test.
-  _.every = function(collection, iterator) {
+  _.every = function(collection, iterator) { // ex. (function(a){return a === 1;})...a is 'item'
     // TIP: Try re-using reduce() here.
+    
+      var returnVal = _.reduce(collection, function(isInThere, item){
+        if(!isInThere){
+          return false;
+        }
+
+        if(iterator){ // If callback function is provided, use it.
+          return iterator(item);
+        }
+        else{ // If no callback is provided, use _.identity.
+          return _.identity(item);
+        }
+      }, true)
+
+      return Boolean(returnVal);
+
   };
 
   // Determine whether any of the elements pass a truth test. If no iterator is
   // provided, provide a default one
   _.some = function(collection, iterator) {
     // TIP: There's a very clever way to re-use every() here.
-  };
+   
+
+   var returnVal = _.reduce(collection, function(passedItem, item){
+    if(passedItem){
+      return true;
+    }
+
+    if(iterator){
+      return iterator(item);
+    }
+    else{
+      return _.identity(item); // If no callback is provided, use _.identity.
+    }
+
+   }, false)
+  
+   return Boolean(returnVal);
+
+};
 
 
   /**
@@ -289,11 +337,47 @@
   //     bla: "even more stuff"
   //   }); // obj1 now contains key1, key2, key3 and bla
   _.extend = function(obj) {
+
+    // ITERATE OVER ARGUMENTS
+    // FOR-IN LOOP ON EACH ARGUMENT
+      //ADD KEYS AND VALUES TO OBJ
+
+    // ***USING _.EACH***
+    _.each(arguments, function(item, index){
+      var objectToExtend = item;
+      _.each(objectToExtend, function(value, key){
+        obj[key] = value;
+      })
+    })
+
+    return obj;
+
+    /*
+    ***USING LOOPS:***
+    for(var i = 0, length = arguments.length; i < length; i++){
+      var objectToExtend = arguments[i];
+      for(var key in objectToExtend){
+        obj[key] = objectToExtend[key];
+
+      }
+    }
+   
+    return obj;
+    */
   };
 
   // Like extend, but doesn't ever overwrite a key that already
   // exists in obj
   _.defaults = function(obj) {
+    _.each(arguments, function(item, index){
+      var objectToInclude = item;
+      _.each(objectToInclude, function(value, key){
+        if(obj[key] === undefined){ // If key not already existent, even if it's "falsy"
+          obj[key] = value;
+      }
+      })
+    })
+    return obj;
   };
 
 
@@ -337,6 +421,24 @@
   // already computed the result for the given argument and return that value
   // instead if possible.
   _.memoize = function(func) {
+
+    var map = {};
+
+    return function(){
+
+        var str = ''; 
+        // Stringify the arguments so they can be used as object keys
+        for(var i = 0; i < arguments.length; i++){
+            str = str + arguments[i] + " ";
+        }
+        
+      if(map[str] == undefined){ // If map does not contain the passed-in args
+        map[str] = func.apply(this, arguments); // "Args": result is inputted to map
+      }
+      
+      return map[str]; // Return stored result if it exists in map
+    };
+
   };
 
   // Delays a function for the given number of milliseconds, and then calls
