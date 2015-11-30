@@ -428,9 +428,15 @@
 
         var str = ''; 
         // Stringify the arguments so they can be used as object keys
+
+        _.each(arguments, function(element){
+          str = str + element + " ";
+        });
+
+        /*
         for(var i = 0; i < arguments.length; i++){
             str = str + arguments[i] + " ";
-        }
+        }*/
         
       if(map[str] == undefined){ // If map does not contain the passed-in args
         map[str] = func.apply(this, arguments); // "Args": result is inputted to map
@@ -448,6 +454,17 @@
   // parameter. For example _.delay(someFunction, 500, 'a', 'b') will
   // call someFunction('a', 'b') after 500ms
   _.delay = function(func, wait) {
+
+    var argsAfterFuncAndWait = [];
+
+    for (var i = 2, length = arguments.length; i < length; i++) {
+      argsAfterFuncAndWait.push(arguments[i]);
+    };
+
+    setTimeout(function(){
+      func.apply(this, argsAfterFuncAndWait)
+    }, wait)
+
   };
 
 
