@@ -512,6 +512,25 @@
   // Calls the method named by functionOrKey on each value in the list.
   // Note: You will need to learn a bit about .apply to complete this.
   _.invoke = function(collection, functionOrKey, args) {
+
+    var resultArr = [];
+
+    for(var i = 0, length = collection.length; i < length; i++){
+
+      if(typeof functionOrKey === 'function'){
+        var result = functionOrKey.apply(collection[i]);
+        
+      }
+      if(typeof functionOrKey === 'string'){
+        var result = collection[i][functionOrKey]();
+      }
+
+      resultArr.push(result);
+        
+    }
+
+    return resultArr;
+
   };
 
   // Sort the object's values by a criterion produced by an iterator.
@@ -553,4 +572,5 @@
   // Note: This is difficult! It may take a while to implement.
   _.throttle = function(func, wait) {
   };
+  
 }());
