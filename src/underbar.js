@@ -538,54 +538,41 @@
   // of that string. For example, _.sortBy(people, 'name') should sort
   // an array of people by their name.
   _.sortBy = function(collection, iterator) {
-    //Apply iterator to collection
-    if( typeof iterator === 'function'){
-      console.log('function');
-
-      var targetCollection = _.map(collection, iterator);
-
-     // console.log(targetCollection);
-
-      targetCollection = targetCollection.sort();
-
-      console.log('sorted targetCollection')
-      console.log(targetCollection);
-
-      for (var i = 0; i < targetCollection.length; i++){
-        for ( var j = 0; j < collection.length; j++){
-           // IF COLLECTION {} CONTAINS THE CURRENT VALUE FROM SORTED TARGETCOLLECTION ARRAY
-          if(_.contains(collection[j], targetCollection[i])){
-           // console.log("collection j ");
-            //console.log(collection[j]);
-            targetCollection[i] = collection[j]; // REPLACE THE 'AGE' WITH THE OBJECT THAT CONTAINS SAID 'AGE' FOR EXAMPLE
-
-        }
-      }
-      }
-      console.log('targetCollection after work has been done')
-      console.log(targetCollection);
-      //console.log('pluck inside sortBy')
-     // console.log(_.pluck(targetCollection, 'x'));
-
-      return targetCollection;
-    }
-    if( typeof iterator === 'string' ){
-                var value = iterator;
-                collection.sort(function (a, b) {
-            if (a[value] > b[value]) {
-              return 1;
-            }
-            if (a[value] < b[value]) {
-              return -1;
-            }
-            // a must be equal to b
-            return 0;
     
-
-          });
-         return collection;
+    if(iterator === 'length'){
+      return collection.sort(function(a,b){return a.length - b.length});
     }
-  }
+
+
+
+    //collection = [{name : 'curly', age : 50}, {name : 'moe', age : 30}]
+    //iterator= function(person) { return person.age; }
+
+    var index = 0;
+
+    return _.pluck(
+      _.map(collection, function(value, key, list) {
+        
+      return {
+        value: value,
+        index: index++,
+        criteria: iterator(value, key, list)
+      };
+
+    }).sort(function(left, right) {
+
+      var a = left.criteria;
+      var b = right.criteria;
+
+      if (a !== b) {
+        if (a > b || a === void 0) return 1;
+        if (a < b || b === void 0) return -1;
+      }
+
+      return left.index - right.index;
+    }), 'value');
+  };
+  
     
 
 
