@@ -378,6 +378,26 @@
   // already computed the result for the given argument and return that value
   // instead if possible.
   _.memoize = function(func) {
+   
+   var storage = {}; // Create an object to store the results of calling func.
+
+    return function(){
+       var argumentsString = '';
+       // The object keys will be unique argument lists, as strings.
+       // Stringify the arguments
+      _.each(arguments, function(element){
+        argumentsString = argumentsString + element + ' ';
+      });
+      // Only call func if the results aren't already in storage, paired with unique argument list
+        // Pass the following inner call to func the arguments array that will be passed into this 'closure function'
+      if (storage[argumentsString] === undefined) {
+        storage[argumentsString] = func.apply(this, arguments)
+        // Every time the closure function is invoked, it check storage, and adds to it if necessary. Closure variables are modifiable.
+      }
+      
+      return storage[argumentsString]; 
+    };
+
   };
 
   // Delays a function for the given number of milliseconds, and then calls
@@ -387,6 +407,17 @@
   // parameter. For example _.delay(someFunction, 500, 'a', 'b') will
   // call someFunction('a', 'b') after 500ms
   _.delay = function(func, wait) {
+    // Use setTimeout
+      // wrap func in anonymous function inside of which .apply is used to pass in arguments[2]-arguments[n];
+    var args = [];
+
+    _.each(arguments, function(element, index, collection){
+      if(index >= 2){
+        args.push(element);
+      }
+    })
+
+    setTimeout(function(){return func.apply(this, args)}, wait)
   };
 
 
@@ -401,6 +432,22 @@
   // input array. For a tip on how to make a copy of an array, see:
   // http://mdn.io/Array.prototype.slice
   _.shuffle = function(array) {
+    var newArray = array.slice(0);
+
+    // Iterate over the array.
+      // Take first element. Give it to a random index.
+      // Assign the element at that index to a temp variable.
+      // Assign first element to temp variable.
+      // Repeat with all elements.
+
+      _.each(newArray, function(element, index, collection){
+        var random = Math.floor(Math.random()*collection.length); // Create random number between 0 and length.
+        var temp = collection[random]; // Temp stores the element at the random index.
+        collection[random] = collection[index]; // The element at random index re-set to current element in iteration.
+        collection[index] = temp; // Current element in iteration re-set to temp.
+      });
+
+    return newArray;
   };
 
 
