@@ -308,8 +308,8 @@
   //   }); // obj1 now contains key1, key2, key3 and bla
   _.extend = function(obj) {
     // Create an iteration to pass over each argument, including the first one.
-      // Use _.each to populate a new object with all the keys and values.
-      // Any repeat keys will be replaced with the later values
+      // Use _.each to populate the first argument object with all the keys and values.
+      // Any repeat keys will be replaced with the later values.
 
     var newObj = arguments[0]; // Make sure that the object reference of first argument is preserved.
 
@@ -329,7 +329,7 @@
     _.each(arguments, function(objectParam){
       _.each(objectParam, function(value, key, object){
         if(newObj[key] === undefined){ // Undefined means non-existent. Using !newObj[key] would overwrite falsy values.
-          newObj[key] = value;
+          newObj[key] = value; // Assign values to previously undefined keys.
         }
       })
     })
