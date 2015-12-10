@@ -7,6 +7,7 @@
   // seem very useful, but remember it--if a function needs to provide an
   // iterator when the user does not pass one in, this will be handy.
   _.identity = function(val) {
+    return val;
   };
 
   /**
@@ -36,15 +37,36 @@
 
   // Like first, but for the last elements. If n is undefined, return just the
   // last element.
+
   _.last = function(array, n) {
+    // If n is undefined return the last element.
+    // If n is a number, slice the array starting from length - n, which slices off the last n elements
+    // Or return whole array if n is greater than length. (But don't let the integer inside slice be negative which would skew results)
+    // If n is zero, slice starts at length, which returns an empty array.
+    return n === undefined ? array[array.length-1] : array.slice(Math.max(0, array.length - n));
   };
+
 
   // Call iterator(value, key, collection) for each element of collection.
   // Accepts both arrays and objects.
   //
   // Note: _.each does not have a return value, but rather simply runs the
   // iterator function over each item in the input collection.
+
   _.each = function(collection, iterator) {
+    // If collection is an array
+    if( Array.isArray(collection) ){
+      // Using a for loop, invoke callback taking each element, each index value, and the object itself as parameters
+      for( var i = 0; i < collection.length; i++){
+        iterator(collection[i], i, collection);
+      }
+    }else{
+      // If collection is a regular object
+      // Use a for-in loop to invoke callback taking each value, each key and the object itself as parameters.
+      for( var key in collection ){
+        iterator(collection[key], key, collection);
+      }
+    }
   };
 
   // Returns the index at which value can be found in the array, or -1 if value
@@ -66,16 +88,64 @@
 
   // Return all elements of an array that pass a truth test.
   _.filter = function(collection, test) {
+    // Create an empty results array to hold our values that pass the truth test.
+    var results = [];
+
+    // Using _.each, iterate over collection
+    _.each(collection, function(element){
+      // If an element passed to the callback named test returns 'true'...
+      if(test(element)){
+        // Push the element into results.
+        results.push(element);
+      }
+    });
+
+    //Return the array of elements that passed the truth test.
+    return results;
+
   };
 
   // Return all elements of an array that don't pass a truth test.
   _.reject = function(collection, test) {
     // TIP: see if you can re-use _.filter() here, without simply
     // copying code in and modifying it
+
+    // Create results array to hold values that don't pass the truth test.
+    var results = [];
+
+    // Pass filter the collection and the test function, e.g. function(a){ return a === true}.
+    // Retrieve an array of values that DO pass the test.
+    var passedVals = _.filter(collection, test);
+
+    // Iterate over original collection...
+      // If an element does not exist in passedVals, it failed test, so push it to results. 
+        // Use _.indexOf --
+        // (if it does not exist in passedVals, indexOf will return -1)
+    _.each(collection, function(element){
+      if( _.indexOf(passedVals, element ) < 0 ){
+        results.push(element);
+      }
+    });
+
+    // Return the results array.
+    return results;
+
   };
 
   // Produce a duplicate-free version of the array.
   _.uniq = function(array) {
+    // Create empty results array
+    var results = [];
+    // Iterate over array
+    _.each(array, function(element){
+      // If does not exist (indexOf returns -1) in results, push to results
+      if(_.indexOf(results, element) < 0){
+        results.push(element);
+      }
+    })
+
+    return results;
+
   };
 
 
@@ -84,6 +154,17 @@
     // map() is a useful primitive iteration function that works a lot
     // like each(), but in addition to running the operation on all
     // the members, it also maintains an array of results.
+
+    var results = [];
+
+    // _.each can modify elements, but a reference to the original collection must be made.
+    // Calling iterator(element) will not work.
+    // One must make use of third parameter which is a reference to the array/object passed in.
+    _.each( collection, function( element, index, obj ){
+      results.push( iterator( obj[index] ) ); // Callback passed to _.map does work on each element.
+    });
+
+    return results;
   };
 
   /*
