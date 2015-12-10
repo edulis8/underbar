@@ -206,6 +206,26 @@
   //   }); // should be 5, regardless of the iterator function passed in
   //          No accumulator is given so the first element is used.
   _.reduce = function(collection, iterator, accumulator) {
+    // Set flag variable to true if no accumulator parameter is passed in.
+    var flag = accumulator === undefined;
+    // Begin iteration on collection...
+    _.each(collection, function(element){
+    // If flag is true (if no accumulator parameter has been passed in)...
+      if(flag){
+        // Set accumulator to first element
+        accumulator = element;
+        // Re-set flag to false to avoid entering this if block again
+        flag = false;
+      }else{
+      // Else: on further iterations or (if accumulator param -has- been passed)
+      // Re-set accumulator to result of callback which does work on with accumulator and element
+
+      accumulator = iterator(accumulator, element);
+      }
+    });
+      // Return accumulator
+      return accumulator;
+   
   };
 
   // Determine if the array or object contains a given value (using `===`).
@@ -224,12 +244,47 @@
   // Determine whether all of the elements match a truth test.
   _.every = function(collection, iterator) {
     // TIP: Try re-using reduce() here.
+ 
+    // Default assignment:
+    iterator = iterator || _.identity;
+
+    // Return the result of calling _.reduce on the collection with a callback and accumulator set to the starting value of 'true';
+    // Accumulator starts as true, if it is re-set to false as a result of a failed test..
+
+    var answer = _.reduce(collection, function(record, item) {
+      // It will *stay* false because it won't escape this if block:
+      if(record === false){
+        return false;
+      }
+      // If item passes the test callback, record is reassigned to true; if it fails, record is reassigned to false and will be forced to keep entering the if block and returning false
+      
+      return Boolean(iterator(item)); // Use Boolean so undefined turns into false
+    }, true);
+
+    return Boolean(answer);
   };
+
 
   // Determine whether any of the elements pass a truth test. If no iterator is
   // provided, provide a default one
+ 
   _.some = function(collection, iterator) {
+
     // TIP: There's a very clever way to re-use every() here.
+
+  iterator = iterator || _.identity;
+
+  return !!/*booleanize*/ !_.every(collection, function(item){ 
+        //_.every FAILS if ALL TESTS don't return false (at least one test returns true). 
+        // The !  turns that into a true so _.some returns true!
+
+        // If any item PASSES TEST, it IS NOT FALSE
+      return !!/*booleanize*/iterator(item) === false; 
+      //_.every needs EVERY ITEM TO BE FALSE or else it EXITS and returns false.
+      // Only if EVERY ITEM FAILS _.some's test does _.every return true, which gets converted and returned as a failure.
+    });
+
+
   };
 
 
@@ -252,11 +307,34 @@
   //     bla: "even more stuff"
   //   }); // obj1 now contains key1, key2, key3 and bla
   _.extend = function(obj) {
+    // Create an iteration to pass over each argument, including the first one.
+      // Use _.each to populate a new object with all the keys and values.
+      // Any repeat keys will be replaced with the later values
+
+    var newObj = arguments[0]; // Make sure that the object reference of first argument is preserved.
+
+    _.each(arguments, function(objectParam){
+      _.each(objectParam, function(value, key, object){
+        newObj[key] = value;
+      })
+    })
+    return newObj;
   };
 
   // Like extend, but doesn't ever overwrite a key that already
   // exists in obj
   _.defaults = function(obj) {
+    var newObj = arguments[0]; // Make sure that the object reference of first argument is preserved.
+
+    _.each(arguments, function(objectParam){
+      _.each(objectParam, function(value, key, object){
+        if(newObj[key] === undefined){ // Undefined means non-existent. Using !newObj[key] would overwrite falsy values.
+          newObj[key] = value;
+        }
+      })
+    })
+    return newObj;
+
   };
 
 
