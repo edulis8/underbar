@@ -462,6 +462,19 @@
   // Calls the method named by functionOrKey on each value in the list.
   // Note: You will need to learn a bit about .apply to complete this.
   _.invoke = function(collection, functionOrKey, args) {
+    var results = [];
+   
+   _.each(collection, function(element){
+    if(typeof functionOrKey === 'function'){
+        var result = functionOrKey.apply(element); 
+        results.push(result);
+      }else{
+        var result = element[functionOrKey]();
+        results.push(result);
+      }
+    });
+
+    return results;
   };
 
   // Sort the object's values by a criterion produced by an iterator.
@@ -469,6 +482,51 @@
   // of that string. For example, _.sortBy(people, 'name') should sort
   // an array of people by their name.
   _.sortBy = function(collection, iterator) {
+    // Create new objects with the following key value pairs
+      // 'originalObject': element
+      // 'criteria': collection.iterator or iterator(collection)
+
+      var newCollection = [];
+
+      _.each(collection, function(element){
+        var object = {
+          originalObject: element
+         
+        };
+        // Criteria is the result of a function call on the element...
+        // or, if iterator is a string, a property lookup on element.
+        
+        object.criteria = typeof iterator === 'function' ? iterator(element) : element[iterator];
+
+        newCollection.push(object);
+      });
+
+        console.log(newCollection);
+      
+        // Note: THIS SORTS NUMBERS FROM LOW TO HIGH.
+        // AND STRINGS FROM A TO Z.
+        // but it doesn't handle undefined values.
+        newCollection.sort(function(a,b){
+          if(typeof a.criteria === 'number'){
+            return a.criteria - b.criteria;
+          }else{
+            if(a.criteria > b.criteria) return 1;
+            if(a.criteria < b.criteria) return -1;
+          }
+
+        })
+
+        
+        
+        console.log(newCollection);
+      // newCollection is now sorted, but we have to extract just the originalObjects 
+      var sortedOriginalCollection = [];
+      _.each(newCollection, function(element){
+        sortedOriginalCollection.push( element.originalObject );
+      });
+
+      return sortedOriginalCollection
+      
   };
 
   // Zip together two or more arrays with elements of the same index
@@ -484,6 +542,18 @@
   //
   // Hint: Use Array.isArray to check if something is an array
   _.flatten = function(nestedArray, result) {
+    
+    result = result || []; // Default assignment.
+
+    _.each(nestedArray, function(element){ // Iterate.
+      if(Array.isArray(element)){ // If element is an array.
+        _.flatten(element, result); // Recursively call flatten on that array and make sure a reference to result is sent through the recursion
+        // Could do result = result.concat(x) and not pass in result as a param.
+      }else{
+        result.push(element); // When iteration comes across a non-array element, push it to result.
+    }
+    });
+    return result;
   };
 
   // Takes an arbitrary number of arrays and produces an array that contains
