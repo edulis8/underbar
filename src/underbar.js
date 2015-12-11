@@ -141,11 +141,9 @@
 
     var results = [];
 
-    // _.each can modify elements, but a reference to the original collection must be made.
-    // Calling iterator(element) will not work.
-    // One must make use of third parameter which is a reference to the array/object passed in.
+    
     _.each( collection, function( element, index, obj ){
-      results.push( iterator( obj[index] ) ); // Callback passed to _.map does work on each element.
+      results.push( iterator( element ) ); // Callback passed to _.map does work on each element.
     });
 
     return results;
@@ -201,7 +199,7 @@
         // Re-set flag to false to avoid entering this if block again
         flag = false;
       }else{
-      // Else: on further iterations or (if accumulator param -has- been passed)
+      // Else: on further iterations or if accumulator param -has- been passed.
       // Re-set accumulator to result of callback which does work on with accumulator and element
 
       accumulator = iterator(accumulator, element);
@@ -213,14 +211,14 @@
   };
 
   // Determine if the array or object contains a given value (using `===`).
+ 
+
   _.contains = function(collection, target) {
     // TIP: Many iteration problems can be most easily expressed in
     // terms of reduce(). Here's a freebie to demonstrate!
+    // ALTERNATE SOLUTION FROM THAT PROVIDED:
     return _.reduce(collection, function(wasFound, item) {
-      if (wasFound) {
-        return true;
-      }
-      return item === target;
+     return wasFound || item === target;
     }, false);
   };
 
@@ -398,7 +396,7 @@
         args.push( element ); // Push element into args array
       }
     });
-
+   // In order to pass arguments into a function parameter for setTimeout, wrap it in an anon. function and use apply.
     setTimeout( function(){return func.apply(this, args)}, wait )
   };
 
@@ -414,10 +412,11 @@
   // input array. For a tip on how to make a copy of an array, see:
   // http://mdn.io/Array.prototype.slice
   _.shuffle = function(array) {
+    // Copy array:
     var newArray = array.slice(0);
 
     // Iterate over the array.
-      // Take first element. Give it to a random index.
+      // Take first element. Send it to a new place in the array, at a random index.
       // Assign the element at that index to a temp variable.
       // Assign first element to temp variable.
       // Repeat with all elements.
@@ -425,7 +424,7 @@
       _.each(newArray, function(element, index, collection){
         var random = Math.floor(Math.random()*collection.length); // Create random number between 0 and length.
         var temp = collection[random]; // Temp stores the element at the random index.
-        collection[random] = collection[index]; // The element at random index re-set to current element in iteration.
+        collection[random] = element; // The element at random index re-set to current element in iteration.
         collection[index] = temp; // Current element in iteration re-set to temp.
       });
 
