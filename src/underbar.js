@@ -295,29 +295,26 @@
       // Use _.each to populate the first argument object with all the keys and values.
       // Any repeat keys will be replaced with the later values.
 
-    var newObj = arguments[0]; // Make sure that the object reference of first argument is preserved.
-
     _.each(arguments, function(objectParam){
-      _.each(objectParam, function(value, key, object){
-        newObj[key] = value;
+      _.each(objectParam, function(value, key){
+        obj[key] = value;
       })
     })
-    return newObj;
+    return obj;
   };
 
   // Like extend, but doesn't ever overwrite a key that already
   // exists in obj
   _.defaults = function(obj) {
-    var newObj = arguments[0]; // Make sure that the object reference of first argument is preserved.
 
     _.each(arguments, function(objectParam){
       _.each(objectParam, function(value, key, object){
-        if(newObj[key] === undefined){ // Undefined means non-existent. Using !newObj[key] would overwrite falsy values.
-          newObj[key] = value; // Assign values to previously undefined keys.
+        if(obj[key] === undefined){ // Undefined means non-existent. Using !newObj[key] would overwrite falsy values.
+          obj[key] = value; // Assign values to previously undefined keys.
         }
       })
     })
-    return newObj;
+    return obj;
 
   };
 
@@ -393,17 +390,16 @@
   _.delay = function(func, wait) {
     // Use setTimeout
       // wrap func in anonymous function inside of which .apply is used to pass in arguments[2]-arguments[n];
-    var args = [];
-
+     var args = [];  
     // Note: the underscore function _.rest would accomplish the following:
     // args = _.rest(arguments, 3)
-    _.each(arguments, function(element, index, collection){
-      if(index >= 2){
-        args.push(element);
+   _.each( arguments, function( element, index ){
+      if( index >= 2 ){
+        args.push( element ); // Push element into args array
       }
-    })
+    });
 
-    setTimeout(function(){return func.apply(this, args)}, wait)
+    setTimeout( function(){return func.apply(this, args)}, wait )
   };
 
 
@@ -448,20 +444,28 @@
   // Calls the method named by functionOrKey on each value in the list.
   // Note: You will need to learn a bit about .apply to complete this.
   _.invoke = function(collection, functionOrKey, args) {
-    var results = [];
+    
    
-   _.each(collection, function(element){
-    if(typeof functionOrKey === 'function'){
-        var result = functionOrKey.apply(element); 
-        results.push(result);
+   return _.map(collection, function(element){
+
+      if(typeof functionOrKey === 'function'){
+
+        return functionOrKey.apply(element); 
+        
       }else{
-        var result = element[functionOrKey]();
-        results.push(result);
+        // Same as -- return element[functionOrKey].apply(element);
+        return element[functionOrKey]();
+        
       }
     });
 
-    return results;
   };
+
+
+
+
+
+
 
   // Sort the object's values by a criterion produced by an iterator.
   // If iterator is a string, sort objects by that property with the name
@@ -472,9 +476,7 @@
       // 'originalObject': a copy of each object in collection
       // 'criteria': collection.iterator or iterator(collection)
 
-      var newCollection = [];
-
-      _.each(collection, function(element){
+      var newCollection = _.map(collection, function(element){
         var object = {
           originalObject: element
         };
@@ -483,7 +485,7 @@
         
         object.criteria = typeof iterator === 'function' ? iterator(element) : element[iterator];
 
-        newCollection.push(object);
+        return object;
       });
       
         // Note: THIS SORTS NUMBERS FROM LOW TO HIGH
@@ -502,7 +504,7 @@
       // newCollection is now sorted, but we have to extract just the originalObjects 
       var sortedOriginalCollection = _.pluck(newCollection, 'originalObject');
 
-      return sortedOriginalCollection
+      return sortedOriginalCollection;
       
   };
 
@@ -524,11 +526,11 @@
 
     _.each(nestedArray, function(element){ // Iterate.
       if(Array.isArray(element)){ // If element is an array.
-        _.flatten(element, result); // Recursively call flatten on that array and make sure a reference to result is sent through the recursion
+       _.flatten(element, result); // Recursively call flatten on that array and make sure a reference to result is sent through the recursion
         // Could do result = result.concat(x) and not pass in result as a param.
       }else{
         result.push(element); // When iteration comes across a non-array element, push it to result.
-    }
+      }
     });
     return result;
   };
