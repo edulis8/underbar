@@ -87,7 +87,7 @@
   };
 
   // Return all elements of an array that pass a truth test.
-  _.filter = function(collection, test) {
+  _.filter = function(collection, test) { 
     // Create an empty results array to hold our values that pass the truth test.
     var results = [];
 
@@ -110,25 +110,9 @@
     // TIP: see if you can re-use _.filter() here, without simply
     // copying code in and modifying it
 
-    // Create results array to hold values that don't pass the truth test.
-    var results = [];
-
-    // Pass filter the collection and the test function, e.g. function(a){ return a === true}.
-    // Retrieve an array of values that DO pass the test.
-    var passedVals = _.filter(collection, test);
-
-    // Iterate over original collection...
-      // If an element does not exist in passedVals, it failed test, so push it to results. 
-        // Use _.indexOf --
-        // (if it does not exist in passedVals, indexOf will return -1)
-    _.each(collection, function(element){
-      if( _.indexOf(passedVals, element ) < 0 ){
-        results.push(element);
-      }
-    });
-
-    // Return the results array.
-    return results;
+    // Pass the test callback into filter, but invert it.
+    // each element will first be passed to this outer anonymous callback, then into test, where the ! will reject true results and include false results.
+    return _.filter(collection, function(element){ return ! test(element) })
 
   };
 
@@ -392,7 +376,7 @@
         // Pass the following inner call to func the arguments array that will be passed into this 'closure function'
       if (storage[argumentsString] === undefined) {
         storage[argumentsString] = func.apply(this, arguments)
-        // Every time the closure function is invoked, it check storage, and adds to it if necessary. Closure variables are modifiable.
+        // Every time the closure function is invoked, it checks storage, and adds to it if necessary. Closure variables are modifiable.
       }
       
       return storage[argumentsString]; 
@@ -411,6 +395,8 @@
       // wrap func in anonymous function inside of which .apply is used to pass in arguments[2]-arguments[n];
     var args = [];
 
+    // Note: the underscore function _.rest would accomplish the following:
+    // args = _.rest(arguments, 3)
     _.each(arguments, function(element, index, collection){
       if(index >= 2){
         args.push(element);
@@ -483,7 +469,7 @@
   // an array of people by their name.
   _.sortBy = function(collection, iterator) {
     // Create new objects with the following key value pairs
-      // 'originalObject': element
+      // 'originalObject': a copy of each object in collection
       // 'criteria': collection.iterator or iterator(collection)
 
       var newCollection = [];
@@ -491,7 +477,6 @@
       _.each(collection, function(element){
         var object = {
           originalObject: element
-         
         };
         // Criteria is the result of a function call on the element...
         // or, if iterator is a string, a property lookup on element.
@@ -500,10 +485,8 @@
 
         newCollection.push(object);
       });
-
-        console.log(newCollection);
       
-        // Note: THIS SORTS NUMBERS FROM LOW TO HIGH.
+        // Note: THIS SORTS NUMBERS FROM LOW TO HIGH
         // AND STRINGS FROM A TO Z.
         // but it doesn't handle undefined values.
         newCollection.sort(function(a,b){
@@ -516,14 +499,8 @@
 
         })
 
-        
-        
-        console.log(newCollection);
       // newCollection is now sorted, but we have to extract just the originalObjects 
-      var sortedOriginalCollection = [];
-      _.each(newCollection, function(element){
-        sortedOriginalCollection.push( element.originalObject );
-      });
+      var sortedOriginalCollection = _.pluck(newCollection, 'originalObject');
 
       return sortedOriginalCollection
       
