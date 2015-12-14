@@ -566,6 +566,34 @@
   // Takes an arbitrary number of arrays and produces an array that contains
   // every item shared between all the passed-in arrays.
   _.intersection = function() {
+
+    // Find longest argument-array
+
+    var longest = _.map(arguments, function(element){return element}).sort(function(a,b){
+      return b.length-a.length})[0];
+
+    // Iterate over the longest array
+      // Check if its elements are contained in all other arrays.
+        // user a counter keep track of all the arguments
+        // if an element occurs arguments.length times, we are golden
+    var results = [];
+
+    for( var i = 0; i < longest.length; i++){
+      var counter = 0;
+      for( var j = 0; j < arguments.length; j++){
+
+        if(arguments[j].indexOf(longest[i]) > -1){
+          counter++;
+        }
+      }
+      if(counter === arguments.length){
+        results.push(longest[i]);
+      }
+    }
+
+  return results;
+
+  
   };
 
   // Take the difference between one array and a number of other arrays.
