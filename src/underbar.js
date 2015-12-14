@@ -582,7 +582,7 @@
       var counter = 0;
       for( var j = 0; j < arguments.length; j++){
 
-        if(arguments[j].indexOf(longest[i]) > -1){
+        if(_.indexOf(arguments[j], longest[i]) > -1){
           counter++;
         }
       }
@@ -598,7 +598,25 @@
 
   // Take the difference between one array and a number of other arrays.
   // Only the elements present in just the first array will remain.
-  _.difference = function(array) {
+  _.difference = function(array1) {
+
+    
+    var results = [];
+
+    for( var i = 0; i < array1.length; i++){
+      var counter = 0
+      for( var j = 1; j < arguments.length; j++){
+
+        if(_.indexOf(arguments[j], array1[i]) < 0 ){
+          counter++;
+        }
+      }
+      if(counter === arguments.length-1){
+        results.push(array1[i]);
+      }
+    }
+
+  return results;
   };
 
   // Returns a function, that, when invoked, will only be triggered at most once
