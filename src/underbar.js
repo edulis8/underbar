@@ -512,7 +512,36 @@
   //
   // Example:
   // _.zip(['a','b','c','d'], [1,2,3]) returns [['a',1], ['b',2], ['c',3], ['d',undefined]]
-  _.zip = function() {
+  _.zip = function(array1, array2) {
+
+    // map the arguments into an array so it can be sorted
+    // this way you can find the longest array and use its length value as the maximum for a counter variable
+
+
+    var sortedArrayOfArrays = _.map(arguments, function(element){
+      return element;
+    }).sort(function(a,b){ return b.length - a.length })
+
+    var length = sortedArrayOfArrays[0].length
+
+    var results = [];
+
+    var counter = 0;
+
+  while(counter < length){
+    // map the elements at index counter ( element[counter] ) to miniArray)
+    var miniArray = _.map(sortedArrayOfArrays, function(element){
+      return element[counter];
+    })
+      // push miniArrays into the results array
+      results.push(miniArray);
+      // increment the counter that will stop the while loop when we are done with longest array
+      counter++;
+
+    }
+
+    return results;
+
   };
 
   // Takes a multidimensional array and converts it to a one-dimensional array.
