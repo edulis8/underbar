@@ -116,6 +116,7 @@
 
   };
 
+
   // Produce a duplicate-free version of the array.
   _.uniq = function(array) {
     // Create empty results array
@@ -198,7 +199,7 @@
         accumulator = element;
         // Re-set flag to false to avoid entering this if block again
         flag = false;
-      }else{
+      } else{
       // Else: on further iterations or if accumulator param -has- been passed.
       // Re-set accumulator to result of callback which does work on with accumulator and element
 
@@ -493,7 +494,8 @@
         newCollection.sort(function(a,b){
           if(typeof a.criteria === 'number'){
             return a.criteria - b.criteria;
-          }else{
+          } 
+          else{
             if(a.criteria > b.criteria) return 1;
             if(a.criteria < b.criteria) return -1;
           }
@@ -502,6 +504,10 @@
 
       // newCollection is now sorted, but we have to extract just the originalObjects 
       var sortedOriginalCollection = _.pluck(newCollection, 'originalObject');
+
+      if(_.contains(sortedOriginalCollection, undefined)){
+        return sortedOriginalCollection.sort();
+      }
 
       return sortedOriginalCollection;
       
@@ -572,24 +578,33 @@
     var longest = _.map(arguments, function(element){return element}).sort(function(a,b){
       return b.length-a.length})[0];
 
+    var outerArgs = arguments; // IMPORTANT NOTE -- DON'T JUST PASS IN 'ARGUMENTS' INTO _.EACH 
+    // IF IT IS **NESTED**. IT WILL BECOME SOMETHING ELSE.
+
     // Iterate over the longest array
       // Check if its elements are contained in all other arrays.
         // user a counter keep track of all the arguments
         // if an element occurs arguments.length times, we are golden
     var results = [];
 
-    for( var i = 0; i < longest.length; i++){
+    _.each(longest, function(elementOfLongest, indexOfLongest){ //i
+      
       var counter = 0;
-      for( var j = 0; j < arguments.length; j++){
-
-        if(_.indexOf(arguments[j], longest[i]) > -1){
+      _.each(outerArgs, function(argument, indexOfArguments){
+       console.log(argument) 
+        if(_.indexOf(argument, elementOfLongest) > -1){
           counter++;
+         
         }
+      });
+      
+
+      if(counter === outerArgs.length){
+        results.push(elementOfLongest);
+        console.log(elementOfLongest)
       }
-      if(counter === arguments.length){
-        results.push(longest[i]);
-      }
-    }
+    });
+    
 
   return results;
 
@@ -600,21 +615,22 @@
   // Only the elements present in just the first array will remain.
   _.difference = function(array1) {
 
+    var outerArgs = arguments;
     
     var results = [];
 
-    for( var i = 0; i < array1.length; i++){
+    _.each(array1, function(array1element){
       var counter = 0
-      for( var j = 1; j < arguments.length; j++){
+      _.each(outerArgs, function(argument){
 
-        if(_.indexOf(arguments[j], array1[i]) < 0 ){
+        if(_.indexOf(argument, array1element) < 0 ){
           counter++;
         }
+      });
+      if(counter === outerArgs.length-1){
+        results.push(array1element);
       }
-      if(counter === arguments.length-1){
-        results.push(array1[i]);
-      }
-    }
+    });
 
   return results;
   };
@@ -625,5 +641,8 @@
   //
   // Note: This is difficult! It may take a while to implement.
   _.throttle = function(func, wait) {
+
   };
+
+
 }());
